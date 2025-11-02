@@ -65,6 +65,15 @@ jobs:
         name: codecov-umbrella
         fail_ci_if_error: false
 
+    - name: Check code formatting
+      run: npm run format:check
+
+    - name: Lint code
+      run: npm run lint
+
+    - name: Type check
+      run: npm run type-check
+
     - name: Build project
       run: npm run build
     

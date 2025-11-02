@@ -59,9 +59,7 @@ describe('ReactNativeResources', () => {
       reactNativeResources.register();
 
       const calls = (mockServer.resource as any).mock.calls;
-      const bestPracticesCall = calls.find((call: any[]) =>
-        call[0] === 'best-practices-guide'
-      );
+      const bestPracticesCall = calls.find((call: any[]) => call[0] === 'best-practices-guide');
 
       expect(bestPracticesCall).toBeDefined();
       expect(bestPracticesCall[1]).toBe('rn://best-practices');

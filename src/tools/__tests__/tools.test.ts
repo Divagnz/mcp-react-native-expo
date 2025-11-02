@@ -60,8 +60,8 @@ describe('ReactNativeTools', () => {
       reactNativeTools.register();
 
       const calls = (mockServer.tool as any).mock.calls;
-      const perfAnalysisCall = calls.find((call: any[]) =>
-        call[0] === 'analyze_codebase_performance'
+      const perfAnalysisCall = calls.find(
+        (call: any[]) => call[0] === 'analyze_codebase_performance'
       );
 
       expect(perfAnalysisCall).toBeDefined();
@@ -72,8 +72,8 @@ describe('ReactNativeTools', () => {
       reactNativeTools.register();
 
       const calls = (mockServer.tool as any).mock.calls;
-      const comprehensiveCall = calls.find((call: any[]) =>
-        call[0] === 'analyze_codebase_comprehensive'
+      const comprehensiveCall = calls.find(
+        (call: any[]) => call[0] === 'analyze_codebase_comprehensive'
       );
 
       expect(comprehensiveCall).toBeDefined();

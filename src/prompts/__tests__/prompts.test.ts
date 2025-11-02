@@ -49,9 +49,7 @@ describe('ReactNativePrompts', () => {
       reactNativePrompts.register();
 
       const calls = (mockServer.prompt as any).mock.calls;
-      const codeReviewCall = calls.find((call: any[]) =>
-        call[0] === 'react-native-code-review'
-      );
+      const codeReviewCall = calls.find((call: any[]) => call[0] === 'react-native-code-review');
 
       expect(codeReviewCall).toBeDefined();
       expect(codeReviewCall[1]).toContain('Review');
@@ -61,9 +59,7 @@ describe('ReactNativePrompts', () => {
       reactNativePrompts.register();
 
       const calls = (mockServer.prompt as any).mock.calls;
-      const architectureCall = calls.find((call: any[]) =>
-        call[0] === 'react-native-architecture'
-      );
+      const architectureCall = calls.find((call: any[]) => call[0] === 'react-native-architecture');
 
       expect(architectureCall).toBeDefined();
       expect(architectureCall[1]).toContain('architecture');
