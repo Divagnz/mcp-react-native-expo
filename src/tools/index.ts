@@ -7,6 +7,11 @@ import { promisify } from 'util';
 import { VersionUtils } from './modules/utils/version-utils.js';
 import { FileScanner } from './modules/utils/file-scanner.js';
 import { ReportFormatter } from './modules/formatters/report-formatter.js';
+import { SecurityAnalyzer } from './modules/analysis/security-analyzer.js';
+import { CodeQualityAnalyzer } from './modules/analysis/code-quality-analyzer.js';
+import { DeprecatedFeaturesAnalyzer } from './modules/analysis/deprecated-features-analyzer.js';
+import { TestingAnalyzer } from './modules/analysis/testing-analyzer.js';
+import { PackageUpgradesAnalyzer } from './modules/analysis/package-upgrades-analyzer.js';
 
 /**
  * React Native Tools
@@ -1382,33 +1387,41 @@ const fetchData = async () => {
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('security')) {
-          analysis.security.push(...this.analyzeFileSecurity(content, fileName));
+          analysis.security.push(...SecurityAnalyzer.analyzeFileSecurity(content, fileName));
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('code_quality')) {
-          analysis.codeQuality.push(...this.analyzeFileCodeQuality(content, fileName));
+          analysis.codeQuality.push(
+            ...CodeQualityAnalyzer.analyzeFileCodeQuality(content, fileName)
+          );
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('refactoring')) {
-          analysis.refactoring.push(...this.analyzeFileRefactoring(content, fileName));
+          analysis.refactoring.push(
+            ...CodeQualityAnalyzer.analyzeFileRefactoring(content, fileName)
+          );
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('deprecated_features')) {
-          analysis.deprecated.push(...this.analyzeFileDeprecated(content, fileName));
+          analysis.deprecated.push(
+            ...DeprecatedFeaturesAnalyzer.analyzeFileDeprecated(content, fileName)
+          );
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('accessibility')) {
-          analysis.accessibility.push(...this.analyzeFileAccessibility(content, fileName));
+          analysis.accessibility.push(
+            ...DeprecatedFeaturesAnalyzer.analyzeFileAccessibility(content, fileName)
+          );
         }
 
         if (analysisTypes.includes('all') || analysisTypes.includes('testing')) {
-          analysis.testing.push(...this.analyzeFileTesting(content, fileName));
+          analysis.testing.push(...TestingAnalyzer.analyzeFileTesting(content, fileName));
         }
       }
 
       // Analyze package.json for upgrades
       if (analysisTypes.includes('all') || analysisTypes.includes('upgrades')) {
-        analysis.upgrades.push(...this.analyzePackageUpgrades(packageJson));
+        analysis.upgrades.push(...PackageUpgradesAnalyzer.analyzePackageUpgrades(packageJson));
       }
 
       return ReportFormatter.formatComprehensiveAnalysis(analysis, projectPath);
