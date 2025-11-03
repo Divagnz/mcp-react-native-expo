@@ -94,7 +94,7 @@ describe('Cache', () => {
       cache.set('key1', 'value1');
 
       // Wait for TTL to expire
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       expect(cache.get('key1')).toBeUndefined();
     });
@@ -102,7 +102,7 @@ describe('Cache', () => {
     it('should not return expired entries with has()', async () => {
       cache.set('key1', 'value1');
 
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       expect(cache.has('key1')).toBe(false);
     });
@@ -111,7 +111,7 @@ describe('Cache', () => {
       cache.set('key1', 'value1');
       cache.set('key2', 'value2');
 
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       const cleaned = cache.cleanup();
       expect(cleaned).toBe(2);
@@ -205,10 +205,7 @@ describe('Cache', () => {
         return obj.id * 2;
       };
 
-      const memoized = cache.memoize(
-        asyncFn,
-        (obj) => `obj-${obj.id}`
-      );
+      const memoized = cache.memoize(asyncFn, (obj) => `obj-${obj.id}`);
 
       await memoized({ id: 5 });
       await memoized({ id: 5 });
@@ -237,7 +234,7 @@ describe('Cache', () => {
 
 describe('CacheManager', () => {
   beforeEach(() => {
-    CacheManager.clearAll();
+    CacheManager.reset();
   });
 
   describe('cache management', () => {
@@ -286,7 +283,7 @@ describe('CacheManager', () => {
       cache1.set('key1', 'value1');
       cache2.set('key2', 'value2');
 
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
 
       const cleaned = CacheManager.cleanupAll();
       expect(cleaned).toBe(2);

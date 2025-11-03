@@ -265,11 +265,16 @@ export class Cache<T = any> {
   private evictLRU(): void {
     let oldestKey: string | undefined;
     let oldestTime = Infinity;
+    let lowestAccessCount = Infinity;
 
-    // Find least recently used entry
+    // Find least recently used entry (use access count as tie-breaker)
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.lastAccessed < oldestTime) {
+      if (
+        entry.lastAccessed < oldestTime ||
+        (entry.lastAccessed === oldestTime && entry.accessCount < lowestAccessCount)
+      ) {
         oldestTime = entry.lastAccessed;
+        lowestAccessCount = entry.accessCount;
         oldestKey = key;
       }
     }
@@ -337,6 +342,14 @@ export class CacheManager {
     for (const cache of this.caches.values()) {
       cache.resetStats();
     }
+  }
+
+  /**
+   * Reset cache manager - clear all cache instances
+   * Useful for testing to ensure clean state
+   */
+  static reset(): void {
+    this.caches.clear();
   }
 }
 
