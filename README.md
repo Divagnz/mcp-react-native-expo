@@ -5,7 +5,7 @@
 [![npm version](https://badge.fury.io/js/%40mrnitro360%2Freact-native-mcp-guide.svg)](https://badge.fury.io/js/%40mrnitro360%2Freact-native-mcp-guide)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-1.1.0-blue.svg)](https://modelcontextprotocol.io/)
-[![Auto-Deploy](https://github.com/MrNitro360/React-Native-MCP/actions/workflows/auto-deploy.yml/badge.svg)](https://github.com/MrNitro360/React-Native-MCP/actions/workflows/auto-deploy.yml)
+[![PR Checks](https://github.com/MrNitro360/React-Native-MCP/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/MrNitro360/React-Native-MCP/actions/workflows/pr-checks.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.72+-blue.svg)](https://reactnative.dev/)
 
@@ -27,13 +27,14 @@
 
 A comprehensive Model Context Protocol (MCP) server designed for professional React Native development teams. This tool provides intelligent code analysis, **expert-level automated code remediation**, security auditing, and performance optimization with production-ready fixes.
 
-**🆕 v1.1.0 - Expert Remediation Features:**
+**🆕 v2.0.0 - Enterprise Architecture & Performance:**
 
+- 🏗️ **Modular Architecture** - Clean, maintainable service-based design with dependency injection
+- ⚡ **Advanced Caching** - LRU cache with intelligent eviction and performance optimization
+- 🧪 **Comprehensive Testing** - 478 tests with 91.38% branch coverage
+- 📊 **Error Handling** - Structured logging with circuit breaker and retry mechanisms
 - 🔧 **Expert Code Remediation** - Automatically fix security, performance, and quality issues
 - 🏗️ **Advanced Refactoring** - Comprehensive component modernization and optimization
-- 🛡️ **Security Fixes** - Automatic hardcoded secret migration and vulnerability patching
-- ⚡ **Performance Fixes** - Memory leak prevention and React Native optimization
-- 📝 **Production-Ready Code** - TypeScript interfaces, StyleSheet extraction, accessibility
 
 **Key Benefits:**
 
@@ -316,7 +317,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "react-native-guide": {
       "command": "npx",
-      "args": ["@mrnitro360/react-native-mcp-guide@1.1.0"],
+      "args": ["@mrnitro360/react-native-mcp-guide@2.0.0"],
       "env": {}
     }
   }
@@ -421,7 +422,25 @@ claude mcp add react-native-guide npx @mrnitro360/react-native-mcp-guide
 
 ## 📋 Changelog
 
-### v1.1.0 - Expert Code Remediation (Latest)
+### v2.0.0 - Enterprise Architecture & Performance (Latest)
+
+**🚀 Major Features:**
+- 🏗️ **Modular Architecture** - Complete refactor into service-based design with dependency injection
+- ⚡ **Advanced Caching** - LRU cache system with intelligent eviction and performance optimization
+- 🧪 **Comprehensive Testing** - 478 tests with 91.38% branch coverage and automated badge generation
+- 📊 **Error Handling** - Structured logging infrastructure with circuit breaker and retry mechanisms
+- 🔧 **Performance Optimization** - Memory management and cache efficiency improvements
+- 🎯 **Code Quality** - Enhanced TypeScript types and error handling throughout
+
+**🎯 Architecture Improvements:**
+- Service layer extraction and modularization
+- Dependency injection for better testability
+- Centralized error handling and logging
+- Cache performance monitoring and metrics
+- Automated test coverage reporting
+- Circuit breaker pattern for resilience
+
+### v1.1.0 - Expert Code Remediation
 
 **🚀 Major Features:**
 - ✨ **NEW**: `remediate_code` tool - Expert-level automatic code fixing
@@ -475,7 +494,7 @@ This project is licensed under the [MIT License](LICENSE). See the license file 
 
 *Empowering development teams to build secure, performant, and accessible mobile applications with automated expert-level code fixes*
 
-🆕 **v1.1.0 - Now with Expert Code Remediation!**
+🆕 **v2.0.0 - Enterprise Architecture & Performance!**
 
 [Get Started](https://www.npmjs.com/package/@mrnitro360/react-native-mcp-guide) • [Documentation](https://github.com/MrNitro360/React-Native-MCP) • [Community](https://github.com/MrNitro360/React-Native-MCP/issues)
 
