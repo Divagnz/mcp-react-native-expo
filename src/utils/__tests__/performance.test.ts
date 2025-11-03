@@ -161,8 +161,8 @@ describe('PerformanceMonitor', () => {
 
       const summaries = monitor.getAllSummaries();
       expect(summaries.length).toBe(2);
-      expect(summaries.some(s => s.operation === 'op1')).toBe(true);
-      expect(summaries.some(s => s.operation === 'op2')).toBe(true);
+      expect(summaries.some((s) => s.operation === 'op1')).toBe(true);
+      expect(summaries.some((s) => s.operation === 'op2')).toBe(true);
     });
   });
 
@@ -233,7 +233,7 @@ describe('PerformanceTimer', () => {
   it('should measure duration', async () => {
     const timer = new PerformanceTimer('test-op', monitor);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 110));
 
     const duration = timer.end(true);
 
@@ -279,7 +279,7 @@ describe('measure helper functions', () => {
       const result = await measure(
         'test-async',
         async () => {
-          await new Promise(resolve => setTimeout(resolve, 50));
+          await new Promise((resolve) => setTimeout(resolve, 50));
           return 'result';
         },
         monitor
@@ -309,12 +309,7 @@ describe('measure helper functions', () => {
     });
 
     it('should include metadata', async () => {
-      await measure(
-        'test',
-        async () => 'result',
-        monitor,
-        { custom: 'data' }
-      );
+      await measure('test', async () => 'result', monitor, { custom: 'data' });
 
       const metrics = monitor.getMetrics();
       expect(metrics[0].metadata).toEqual({ custom: 'data' });

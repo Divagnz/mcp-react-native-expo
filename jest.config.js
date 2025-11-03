@@ -51,7 +51,7 @@ export default {
     '!src/**/index.ts', // barrel/entrypoints excluded for now
   ],
   coverageDirectory: '<rootDir>/coverage',
-  coverageReporters: ['text', 'text-summary', 'lcov', 'html', 'json'],
+  coverageReporters: ['text', 'lcov', 'json-summary'],
 
   // ──────────────────────────────────────────────────────────────
   //  Coverage Thresholds (incrementally tighten as project matures)

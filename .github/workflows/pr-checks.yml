@@ -45,16 +45,17 @@ jobs:
           ls -lah coverage || true
           find coverage -maxdepth 1 -type f -printf '%f\n' || true
 
-      # Upload LCOV to Codecov (more reliable than coverage-final.json)
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: true
-          verbose: true
+      - name: Generate coverage badge
+        run: npx jest-coverage-badges
 
+      - name: Upload badge artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-badges
+          path: |
+            coverage/*.svg
+          retention-days: 7
   type-check:
     name: TypeScript Type Check
     runs-on: ubuntu-latest
