@@ -1,11 +1,11 @@
 {
-  "name": "@mrnitro360/react-native-mcp-guide",
-  "version": "1.1.0",
-  "description": "MCP server for React Native best practices guidance with expert-level code remediation",
+  "name": "@divagnz/react-native-mcp-server",
+  "version": "2.0.0",
+  "description": "Advanced MCP server for React Native development - comprehensive code analysis, performance optimization, best practices, package management, and AI-powered debugging assistance",
   "type": "module",
   "main": "build/index.js",
   "bin": {
-    "react-native-mcp-guide": "./build/index.js"
+    "react-native-mcp": "./build/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -21,17 +21,46 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "quality": "npm run lint && npm run format:check && npm run type-check",
+    "prepublishOnly": "npm run quality && npm test && npm run build",
     "prepare": "husky"
   },
   "keywords": [
     "mcp",
     "model-context-protocol",
     "react-native",
+    "code-analysis",
+    "performance-optimization",
     "best-practices",
-    "development-guide"
+    "debugging",
+    "package-management",
+    "dependency-resolution",
+    "security-audit",
+    "ai-assistant",
+    "developer-tools",
+    "code-quality",
+    "testing",
+    "accessibility",
+    "linting",
+    "refactoring"
   ],
-  "author": "mrnitro360",
+  "author": {
+    "name": "Divagnz",
+    "url": "https://github.com/Divagnz"
+  },
+  "contributors": [
+    {
+      "name": "mrnitro360"
+    }
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Divagnz/React-Native-MCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Divagnz/React-Native-MCP/issues"
+  },
+  "homepage": "https://github.com/Divagnz/React-Native-MCP#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "winston": "^3.18.3",
