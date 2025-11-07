@@ -433,7 +433,7 @@ claude mcp add react-native-expo-mcp npx @divagnz/react-native-expo-mcp
 - ✅ Structured logging with circuit breaker patterns
 - ✅ Expert code remediation capabilities
 - ✅ Advanced component refactoring tools
-- ✅ 17 specialized React Native development tools
+- ✅ 32 specialized React Native development tools (17 core + 15 Expo CLI)
 
 **Current Tools Include:**
 - Component analysis and optimization
@@ -444,15 +444,16 @@ claude mcp add react-native-expo-mcp npx @divagnz/react-native-expo-mcp
 - Package management and upgrades
 - Debugging guidance
 - Architecture advice
+- **NEW**: 15 Expo CLI tools (dev server, builds, OTA updates, project management)
 
 ### Upcoming Features 🔜
 
-#### Expo CLI Integration
-- 🔜 Development server management (start, QR codes, logs, controls)
-- 🔜 EAS cloud build management (trigger, status, submit)
-- 🔜 Project management tools (doctor, install, upgrade)
-- 🔜 OTA update publishing with rollout control
-- 🔜 12 comprehensive Expo CLI tools
+#### Expo CLI Integration ✅
+- ✅ Development server management (start, QR codes, logs, controls)
+- ✅ EAS cloud build management (trigger, status, submit)
+- ✅ Project management tools (doctor, install, upgrade)
+- ✅ OTA update publishing with rollout control
+- ✅ 15 comprehensive Expo CLI tools (7 session-based + 8 one-shot)
 
 #### ADB (Android Debug Bridge) Integration
 - 🔜 Device connection and management
