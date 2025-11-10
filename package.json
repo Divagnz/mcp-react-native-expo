@@ -91,6 +91,9 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "overrides": {
+    "minimist": "^1.2.8"
+  },
   "files": [
     "build/"
   ],
