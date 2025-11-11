@@ -144,9 +144,34 @@ export const SUCCESS_MESSAGES = {
 // Environment Variables
 // ============================================================================
 
+/**
+ * Environment variables for Expo CLI integration
+ *
+ * REQUIRED for Android builds:
+ *   - ANDROID_HOME: Path to Android SDK (e.g., $HOME/Android/Sdk)
+ *   - ANDROID_SDK_ROOT: Same as ANDROID_HOME
+ *   - JAVA_HOME: Path to JDK 17+ (e.g., /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home)
+ *
+ * OPTIONAL for EAS (cloud builds & OTA updates):
+ *   - EXPO_TOKEN: Personal access token from expo.dev
+ *   - EAS_TOKEN: Same as EXPO_TOKEN (for EAS CLI)
+ *
+ * Java Version Management:
+ *   Use jenv to manage Java versions: https://github.com/jenv/jenv
+ *   Minimum Java 17 required for Android Gradle Plugin 8.0+
+ *   Recommended: Java 17 or 21 (LTS versions)
+ */
 export const ENV_VARS = {
+  // Android Development
+  ANDROID_HOME: 'ANDROID_HOME',
+  ANDROID_SDK_ROOT: 'ANDROID_SDK_ROOT',
+  JAVA_HOME: 'JAVA_HOME',
+
+  // EAS Authentication (optional)
   EXPO_TOKEN: 'EXPO_TOKEN',
   EAS_TOKEN: 'EAS_TOKEN',
+
+  // CLI Behavior
   EXPO_NO_TELEMETRY: 'EXPO_NO_TELEMETRY',
   EXPO_NO_REDIRECT: 'EXPO_NO_REDIRECT',
 } as const;

@@ -57,6 +57,57 @@ An enhanced Model Context Protocol (MCP) server designed for professional React 
 - **Claude CLI** or **Claude Desktop**
 - **React Native** development environment
 
+### Environment Setup
+
+For full Expo CLI functionality, configure these environment variables:
+
+#### Required for Android Development
+
+```bash
+# Android SDK location
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+
+# Add Android tools to PATH
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+#### Java Version Management (Recommended)
+
+**Use jenv for managing Java versions:**
+
+```bash
+# Install jenv (macOS)
+brew install jenv
+
+# Add to shell profile (~/.zshrc or ~/.bashrc)
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+# Add Java versions
+jenv add /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+
+# Set global version (Java 17+ recommended for React Native)
+jenv global 17
+
+# Verify
+java -version  # Should show 17.x.x or higher
+```
+
+**Minimum Java Version:** Java 17 (LTS)
+**Recommended:** Java 17 or 21 (LTS versions)
+
+> **Why Java 17?** Required for Android Gradle Plugin 8.0+ and modern React Native projects. Older versions may cause build failures.
+
+#### Optional: EAS CLI Authentication
+
+```bash
+# For EAS cloud builds and updates
+export EXPO_TOKEN=your_expo_token_here
+export EAS_TOKEN=your_eas_token_here
+```
+
 ### Installation
 
 #### Automated Installation (Recommended)

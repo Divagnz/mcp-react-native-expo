@@ -58,6 +58,114 @@ This specification defines a comprehensive set of Expo CLI integration tools for
 
 ---
 
+## 🔧 Environment Setup
+
+### Required Environment Variables
+
+#### Android Development
+```bash
+# Android SDK location (required for Android builds)
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+
+# Add Android tools to PATH
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+```
+
+#### Java Version Management
+**Recommended: Use jenv for managing Java versions**
+
+```bash
+# Install jenv (macOS)
+brew install jenv
+
+# Configure shell (~/.zshrc or ~/.bashrc)
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+# Add Java 17 (minimum required)
+jenv add /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+
+# Set as default
+jenv global 17
+
+# Verify
+java -version  # Should show 17.x.x or higher
+```
+
+**Java Version Requirements:**
+- **Minimum:** Java 17 (LTS) - Required for Android Gradle Plugin 8.0+
+- **Recommended:** Java 17 or 21 (LTS versions)
+- **Why?** Modern React Native and Expo projects require Java 17+ for Android builds
+
+#### EAS Authentication (Optional)
+```bash
+# For EAS cloud builds and OTA updates
+export EXPO_TOKEN=your_expo_token_here
+export EAS_TOKEN=your_eas_token_here
+```
+
+**Getting EAS Tokens:**
+```bash
+# Login to Expo
+npx expo login
+
+# Generate personal access token at:
+# https://expo.dev/accounts/[your-account]/settings/access-tokens
+```
+
+### Platform-Specific Setup
+
+#### macOS (iOS Development)
+```bash
+# Xcode Command Line Tools
+xcode-select --install
+
+# CocoaPods (required for iOS)
+sudo gem install cocoapods
+```
+
+#### Linux
+```bash
+# Install OpenJDK 17
+sudo apt-get install openjdk-17-jdk
+
+# Set JAVA_HOME
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+#### Windows
+```powershell
+# Set environment variables in PowerShell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+
+# Add to PATH
+$env:PATH += ";$env:ANDROID_HOME\platform-tools"
+$env:PATH += ";$env:ANDROID_HOME\emulator"
+```
+
+### Verification
+
+```bash
+# Verify environment setup
+echo $ANDROID_HOME
+echo $JAVA_HOME
+java -version
+adb version
+
+# Check Expo CLI
+npx expo --version
+
+# Check EAS CLI
+npx eas --version
+```
+
+---
+
 ## 🗂️ Tool Categories
 
 ### Category 1: Development Server Management (4 tools)
