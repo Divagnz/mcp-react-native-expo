@@ -20,6 +20,7 @@
 8. [Success Metrics](#success-metrics)
 9. [Dependencies](#dependencies)
 10. [Testing Strategy](#testing-strategy)
+11. [Troubleshooting Guide](#-troubleshooting-guide)
 
 ---
 
@@ -55,6 +56,114 @@ This specification defines a comprehensive set of Expo CLI integration tools for
 3. **Security First** - No credential exposure, secure token handling
 4. **Performance** - Efficient polling, caching, and parallel execution
 5. **Comprehensive Logging** - Detailed logs for debugging and monitoring
+
+---
+
+## 🔧 Environment Setup
+
+### Required Environment Variables
+
+#### Android Development
+```bash
+# Android SDK location (required for Android builds)
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+
+# Add Android tools to PATH
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+```
+
+#### Java Version Management
+**Recommended: Use jenv for managing Java versions**
+
+```bash
+# Install jenv (macOS)
+brew install jenv
+
+# Configure shell (~/.zshrc or ~/.bashrc)
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+# Add Java 17 (minimum required)
+jenv add /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+
+# Set as default
+jenv global 17
+
+# Verify
+java -version  # Should show 17.x.x or higher
+```
+
+**Java Version Requirements:**
+- **Minimum:** Java 17 (LTS) - Required for Android Gradle Plugin 8.0+
+- **Recommended:** Java 17 or 21 (LTS versions)
+- **Why?** Modern React Native and Expo projects require Java 17+ for Android builds
+
+#### EAS Authentication (Optional)
+```bash
+# For EAS cloud builds and OTA updates
+export EXPO_TOKEN=your_expo_token_here
+export EAS_TOKEN=your_eas_token_here
+```
+
+**Getting EAS Tokens:**
+```bash
+# Login to Expo
+npx expo login
+
+# Generate personal access token at:
+# https://expo.dev/accounts/[your-account]/settings/access-tokens
+```
+
+### Platform-Specific Setup
+
+#### macOS (iOS Development)
+```bash
+# Xcode Command Line Tools
+xcode-select --install
+
+# CocoaPods (required for iOS)
+sudo gem install cocoapods
+```
+
+#### Linux
+```bash
+# Install OpenJDK 17
+sudo apt-get install openjdk-17-jdk
+
+# Set JAVA_HOME
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+#### Windows
+```powershell
+# Set environment variables in PowerShell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+
+# Add to PATH
+$env:PATH += ";$env:ANDROID_HOME\platform-tools"
+$env:PATH += ";$env:ANDROID_HOME\emulator"
+```
+
+### Verification
+
+```bash
+# Verify environment setup
+echo $ANDROID_HOME
+echo $JAVA_HOME
+java -version
+adb version
+
+# Check Expo CLI
+npx expo --version
+
+# Check EAS CLI
+npx eas --version
+```
 
 ---
 
@@ -2647,6 +2756,499 @@ jobs:
               message: 'CI Build - ${{ github.sha }}'
             });
           "
+```
+
+---
+
+## 🔍 Troubleshooting Guide
+
+### Common Issues and Solutions
+
+This section provides solutions to common problems encountered when using Expo MCP tools, based on real-world usage feedback.
+
+#### Port 8081 Already in Use
+
+**Symptoms:**
+- `expo_dev_start` times out after 60 seconds
+- Error: "EADDRINUSE: address already in use"
+- Dev server fails to start
+
+**Diagnosis:**
+```bash
+# Check what's using port 8081
+lsof -ti:8081
+
+# Or use MCP tool (when available)
+expo_sessions_list(show_ports: true)
+```
+
+**Solutions:**
+
+1. **Kill the process using the port:**
+```bash
+# Manual method
+lsof -ti:8081 | xargs kill -9
+
+# MCP tool method (recommended, when available)
+expo_kill_process(port: 8081)
+```
+
+2. **Use a different port:**
+```typescript
+expo_dev_start(platform: "android", port: 19000)
+```
+
+3. **Clean up all Expo processes:**
+```typescript
+expo_cleanup()  // When available
+```
+
+**Prevention:**
+- Always stop dev servers when done: `expo_dev_stop(session_id: "...")`
+- Run cleanup before starting new sessions: `expo_cleanup()`
+
+---
+
+#### Java Version Incompatible
+
+**Symptoms:**
+- Build fails with "Unsupported class file major version 68"
+- Gradle error about unsupported Java version
+- Build fails after 10+ minutes
+
+**Diagnosis:**
+```bash
+# Check current Java version
+java -version
+
+# Should show 17.x.x or higher (but not 24+)
+```
+
+**Root Cause:**
+- Java 24 is not compatible with Gradle 8.13
+- Android Gradle Plugin 8.0+ requires Java 17 minimum
+- Gradle 8.13 supports Java 17-23 (not 24+)
+
+**Solutions:**
+
+1. **Use jenv to switch Java version (recommended):**
+```bash
+# Check available Java versions
+jenv versions
+
+# Switch to Java 17
+jenv shell 17
+
+# Verify
+java -version  # Should show 17.x.x
+```
+
+2. **Install Java 17 if not present:**
+```bash
+# macOS
+brew install openjdk@17
+
+# Linux (Ubuntu/Debian)
+sudo apt install openjdk-17-jdk
+
+# Add to jenv
+jenv add /path/to/java-17
+```
+
+3. **Set JAVA_HOME explicitly:**
+```bash
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+```
+
+**Prevention:**
+- Use jenv to manage Java versions
+- Always validate environment before builds: `expo_validate_environment(platform: "android")`  (when available)
+- Stick to Java 17 or 21 (LTS versions)
+
+**Related Links:**
+- [jenv documentation](https://github.com/jenv/jenv)
+- [Android Gradle Plugin compatibility](https://developer.android.com/build/releases/gradle-plugin#updating-gradle)
+
+---
+
+#### Missing Polyfills (Hermes)
+
+**Symptoms:**
+- Error: "ReferenceError: Property 'Buffer' doesn't exist"
+- Error: "ReferenceError: Property 'EventTarget' doesn't exist"
+- App crashes on startup with polyfill errors
+
+**Root Cause:**
+- Hermes JavaScript engine (default in React Native) doesn't include all web APIs
+- Common missing: Buffer, EventTarget, atob, btoa, URL, URLSearchParams
+
+**Diagnosis:**
+```typescript
+// Check which polyfills are missing (when available)
+expo_detect_polyfills()
+```
+
+**Solutions:**
+
+1. **Auto-setup polyfills (recommended, when available):**
+```typescript
+expo_setup_polyfills(polyfills: "auto", install_packages: true)
+```
+
+2. **Manual Buffer polyfill (minimal):**
+```typescript
+// Add to app/_layout.tsx (before other imports)
+if (typeof global.Buffer === 'undefined') {
+  global.Buffer = {
+    from: (data: any, encoding?: string) => {
+      if (encoding === 'base64') {
+        return btoa(String(data));
+      }
+      return String(data);
+    },
+    isBuffer: () => false,
+  } as any;
+}
+```
+
+3. **Manual EventTarget polyfill:**
+```typescript
+// Add to app/_layout.tsx (before other imports)
+if (typeof global.EventTarget === 'undefined') {
+  global.EventTarget = class EventTarget {
+    private listeners: Map<string, Set<Function>> = new Map();
+
+    addEventListener(type: string, listener: Function) {
+      if (!this.listeners.has(type)) {
+        this.listeners.set(type, new Set());
+      }
+      this.listeners.get(type)?.add(listener);
+    }
+
+    removeEventListener(type: string, listener: Function) {
+      this.listeners.get(type)?.delete(listener);
+    }
+
+    dispatchEvent(event: any) {
+      const listeners = this.listeners.get(event.type);
+      if (listeners) {
+        listeners.forEach(listener => listener(event));
+      }
+      return true;
+    }
+  } as any;
+}
+```
+
+4. **Use full polyfill packages:**
+```bash
+# For Buffer
+yarn add @craftzdog/react-native-buffer
+
+# Then in app/_layout.tsx:
+import { Buffer } from '@craftzdog/react-native-buffer';
+global.Buffer = Buffer;
+```
+
+**Prevention:**
+- Run polyfill detection before deploying: `expo_detect_polyfills()`
+- Test on physical devices (Hermes behavior differs from web)
+- Use minimal polyfills for better performance
+
+**Related Links:**
+- [React Native JavaScript Environment](https://reactnative.dev/docs/javascript-environment#polyfills)
+- [Hermes documentation](https://hermesengine.dev/)
+
+---
+
+#### Dependency Version Conflicts
+
+**Symptoms:**
+- `expo-doctor` reports "X packages out of date"
+- Duplicate dependencies warnings
+- Peer dependency warnings
+- App crashes with "Invariant Violation" errors
+
+**Diagnosis:**
+```bash
+# Check for issues
+npx expo-doctor
+
+# Or use MCP tool (when available)
+expo_doctor()
+```
+
+**Common Issues:**
+1. **Major version mismatches:** Packages don't match Expo SDK version
+2. **Duplicate dependencies:** Same package with multiple versions
+3. **Missing peer dependencies:** Required packages not installed
+
+**Solutions:**
+
+1. **Auto-fix all issues (recommended, when available):**
+```typescript
+expo_install_check(auto_fix: true)
+```
+
+2. **Manual fix:**
+```bash
+# Check compatibility
+npx expo install --check
+
+# Auto-fix
+npx expo install --check --fix
+
+# Or install specific packages
+npx expo install expo-av expo-constants react-native
+```
+
+3. **Fix specific package:**
+```bash
+# Example: Fix react-native-worklets version mismatch
+yarn add react-native-worklets@0.5.1
+```
+
+**Real Example from User Transcript:**
+```bash
+# User had to run these commands manually:
+npx expo-doctor                    # Found 27 packages out of date
+npx expo install --check           # Prompted to fix
+# Installed 27 packages
+yarn add @expo/metro-runtime       # Missing peer dependency
+yarn add react-native-worklets@0.5.1  # Version downgrade needed
+npx expo-doctor                    # Verify fixed: 17/17 checks passed
+```
+
+**Prevention:**
+- Run `expo_doctor()` before major builds
+- Keep Expo SDK up to date
+- Use `expo install` instead of `yarn add` or `npm install` for Expo packages
+- Add to CI/CD pipeline: `expo_install_check(auto_fix: true)`
+
+---
+
+#### Tool Not Available / MCP Connection Failures
+
+**Symptoms:**
+- Error: "No such tool available: mcp__react-native-expo-mcp__*"
+- "Failed to reconnect to react-native-expo-mcp"
+- Tools work intermittently
+
+**Diagnosis:**
+```bash
+# Check MCP configuration
+cat .mcp.json
+
+# Check if MCP server is running
+ps aux | grep mcp
+```
+
+**Solutions:**
+
+1. **Verify MCP configuration:**
+```json
+// .mcp.json should contain:
+{
+  "mcpServers": {
+    "react-native-expo-mcp": {
+      "command": "node",
+      "args": ["path/to/react-native-expo-mcp/build/index.js"]
+    }
+  }
+}
+```
+
+2. **Restart MCP server:**
+```bash
+# In Claude Desktop, use /mcp command
+# Or restart Claude Desktop application
+```
+
+3. **Check tool availability:**
+```typescript
+// When available
+expo_server_status()
+expo_help()  // List all available tools
+```
+
+4. **Verify installation:**
+```bash
+# Check if MCP server is installed
+npm list -g | grep react-native-expo-mcp
+
+# Or check local installation
+npm list | grep react-native-expo-mcp
+```
+
+**Prevention:**
+- Use latest version of MCP server
+- Check GitHub issues for known problems
+- Ensure Node.js version compatibility (>=18.0.0)
+
+---
+
+#### Build Timeout / Long Build Times
+
+**Symptoms:**
+- `expo_build_local_start` times out
+- Builds take 10+ minutes
+- Gradle configuration takes forever
+
+**Common Causes:**
+1. First build (downloading dependencies)
+2. Gradle daemon starting
+3. Large dependency tree
+4. Slow internet connection
+5. Insufficient system resources
+
+**Solutions:**
+
+1. **Increase timeout:**
+```typescript
+expo_build_local_start(
+  platform: "android",
+  timeout_ms: 1800000  // 30 minutes for first build
+)
+```
+
+2. **Monitor build progress:**
+```typescript
+// Check build logs
+expo_build_local_read(
+  session_id: "expo-build-xxx",
+  mode: "progress"  // When available
+)
+
+// Or use summary
+expo_build_summary(session_id: "expo-build-xxx")  // When available
+```
+
+3. **Optimize Gradle:**
+```bash
+# Add to android/gradle.properties
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.configureondemand=true
+org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m
+```
+
+4. **Clear Gradle cache:**
+```bash
+cd android && ./gradlew clean
+rm -rf ~/.gradle/caches/
+```
+
+**Expected Build Times:**
+- **First build:** 10-20 minutes (downloading dependencies)
+- **Incremental build:** 1-3 minutes
+- **No-change build:** 20-30 seconds
+
+---
+
+#### QR Code Not Scanning / Dev Server Connection Issues
+
+**Symptoms:**
+- QR code displayed but won't scan
+- "Unable to connect to dev server"
+- App stuck on loading screen
+
+**Solutions:**
+
+1. **Check network connectivity:**
+```bash
+# Ensure phone and computer on same network
+# Check firewall settings allow port 8081 and 19000
+```
+
+2. **Use direct URL instead of QR:**
+```typescript
+// Get dev server URL from logs
+expo_dev_read(session_id: "expo-dev-xxx", tail: 20)
+
+// Look for: exp://192.168.x.x:8081
+// Manually enter in Expo Go app
+```
+
+3. **Check dev server is running:**
+```typescript
+expo_sessions_list(type_filter: "dev_server")
+```
+
+4. **Restart dev server:**
+```typescript
+expo_dev_stop(session_id: "expo-dev-xxx")
+expo_dev_start(platform: "android", clear_cache: true)
+```
+
+5. **Use tunnel mode (if on different network):**
+```bash
+# Requires ngrok or similar
+npx expo start --tunnel
+```
+
+**Prevention:**
+- Use same WiFi network for computer and phone
+- Configure firewall to allow Metro bundler ports
+- Use Expo Dev Client instead of Expo Go for production apps
+
+---
+
+### Error Code Reference
+
+#### PORT_IN_USE
+**Code:** `PORT_IN_USE`
+**Severity:** High
+**Fix:** `expo_kill_process(port: 8081)` or use different port
+
+#### JAVA_VERSION_MISMATCH
+**Code:** `JAVA_VERSION_MISMATCH`
+**Severity:** Critical
+**Fix:** `jenv shell 17` or install Java 17
+
+#### MISSING_POLYFILL
+**Code:** `MISSING_POLYFILL`
+**Severity:** Critical
+**Fix:** `expo_setup_polyfills(polyfills: "auto")`
+
+#### DEPENDENCY_CONFLICT
+**Code:** `DEPENDENCY_CONFLICT`
+**Severity:** High
+**Fix:** `expo_install_check(auto_fix: true)`
+
+#### BUILD_TIMEOUT
+**Code:** `BUILD_TIMEOUT`
+**Severity:** Medium
+**Fix:** Increase timeout or optimize Gradle
+
+#### ANDROID_HOME_NOT_SET
+**Code:** `ANDROID_HOME_NOT_SET`
+**Severity:** Critical
+**Fix:** Set `ANDROID_HOME` environment variable
+
+---
+
+### Getting Help
+
+If issues persist:
+
+1. **Check documentation:**
+   - [Expo documentation](https://docs.expo.dev/)
+   - [React Native MCP repository](https://github.com/Divagnz/React-Native-MCP)
+
+2. **Enable verbose logging:**
+```typescript
+expo_build_local_read(session_id: "xxx", verbose: true)
+```
+
+3. **Report issues:**
+   - [GitHub Issues](https://github.com/Divagnz/React-Native-MCP/issues)
+   - Include: OS, Node version, Expo SDK version, full error logs
+
+4. **Use diagnostic tools:**
+```typescript
+expo_doctor()           // When available
+expo_validate_environment(platform: "android")  // When available
+expo_detect_polyfills() // When available
 ```
 
 ---
